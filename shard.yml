@@ -1,0 +1,19 @@
+name: clog
+description: Convenient, context bearing logger for Crystal.
+version: 1.0.0
+
+authors:
+  - moe <moe@busyloop.net>
+
+crystal: 0.32.1
+
+license: MIT
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 0.10.1
+
+  timecop:
+    github: crystal-community/timecop.cr
+
