@@ -84,6 +84,7 @@ abstract class Clog::Formatter
 end
 
 module Clog
+  @[JSON::Field(ignore: true)]
   getter log_context = {} of Symbol => Nil | Bool | Int8 | Int16 | Int32 | Int64 | UInt8 | UInt16 | UInt32 | UInt64 | Float32 | Float64 | String | Symbol
 
   def _context(**data)

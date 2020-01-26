@@ -1,6 +1,6 @@
 name: clog
 description: Convenient, context bearing logger for Crystal.
-version: 1.0.0
+version: 1.0.1
 
 authors:
   - moe <moe@busyloop.net>
