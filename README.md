@@ -10,7 +10,7 @@ Convenient, context bearing logger for Crystal.
 * **Context.**<br>
   Log messages automatically include the calling class and method name for context.<br>
   Additional custom context, persistent per calling instance, can be set at runtime.
-* **Easily Customizable. Fomatters for JSON and Text included.**<br>
+* **Easily Customizable. Formatters for JSON and Text included.**<br>
   Look [here](https://github.com/busyloop/clog/tree/master/src/formatters) if you would like to write your own formatter.
 
 ## Installation
@@ -51,8 +51,12 @@ class Session
   end
 
   def goto(page_id)
-    _info(text: "User changed page", new_page: page_id)
-    _context(page: page_id)
+    begin
+      _info(text: "User changed page", new_page: page_id)
+      _context(page: page_id)
+    rescue ex : Exception
+      _error("An error occurred", ex)
+    end
   end
 
   def logout
