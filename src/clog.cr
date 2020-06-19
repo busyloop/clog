@@ -1,7 +1,7 @@
 require "json"
 
 class Clog::Settings
-  LOG_LEVELS = %w(DEBUG INFO WARN ERROR FATAL)
+  LOG_LEVELS = %w(DEBUG VERBOSE INFO WARN ERROR FATAL)
 
   class_property formatter : Formatter = (STDOUT.tty? ? Formatter::KeyValue.new(STDOUT) : Formatter::JSON.new(STDOUT))
   class_property utc : Bool = false
@@ -30,33 +30,33 @@ class Clog::Settings
     {} of String => String
   end
 
-  def self.log(level, method, log_context, payload)
+  def self.log(level, source, log_context, payload)
     @@mutex.synchronize {
-      Clog::Settings.formatter.format(timestamp, LOG_LEVELS[level], { c: method }.to_h.merge(log_context).merge(payload.to_h))
+      Clog::Settings.formatter.format(timestamp, LOG_LEVELS[level], { c: source }.to_h.merge(log_context).merge(payload.to_h))
     }
   end
 
-  def self.log(level, method, log_context, payload : String)
+  def self.log(level, source, log_context, payload : String)
     log_payload = {} of String => String
     log_payload[Clog::Settings.formatter.key_message] = payload
-    log(level, method, log_context, log_payload)
+    log(level, source, log_context, log_payload)
   end
 
-  def self.log(level, method, log_context, payload : Exception)
+  def self.log(level, source, log_context, payload : Exception)
     log_payload = {} of String => String | Array(String)
     log_payload[Clog::Settings.formatter.key_exception_message] = payload.message || ""
     log_payload[Clog::Settings.formatter.key_exception] = payload.class.name
     log_payload[Clog::Settings.formatter.key_backtrace] = payload.backtrace
-    log(level, method, log_context, log_payload)
+    log(level, source, log_context, log_payload)
   end
 
-  def self.log(level, method, log_context, message : String, ex : Exception)
+  def self.log(level, source, log_context, message : String, ex : Exception)
     log_payload = {} of String => String | Array(String)
     log_payload[Clog::Settings.formatter.key_message] = message
     log_payload[Clog::Settings.formatter.key_exception_message] = ex.message || ""
     log_payload[Clog::Settings.formatter.key_exception] = ex.class.name
     log_payload[Clog::Settings.formatter.key_backtrace] = ex.backtrace
-    log(level, method, log_context, log_payload)
+    log(level, source, log_context, log_payload)
   end
 end
 
@@ -123,5 +123,6 @@ module Clog
   {% end %}
 end
 
+require "./backend"
 require "./formatters/key_value"
 require "./formatters/json"
